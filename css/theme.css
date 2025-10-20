@@ -1,4 +1,6 @@
-/* simple theme variables ready to be toggled later */
+/* css/theme.css - variáveis de tema e alternância via [data-theme] no <html> */
+
+/* Tema escuro (padrão) */
 :root {
   --bg: #0f1723;
   --surface: #0b1220;
@@ -7,5 +9,34 @@
   --accent: #3fb0ff;
   --danger: #ff6b6b;
   --success: #2ecc71;
+  --radius: 8px;
+  --gap: 12px;
+  --max-width: 1100px;
+  --shadow: 0 6px 18px rgba(2,6,23,0.6);
 }
-body { background: var(--bg); color: var(--text); }
+
+/* Tema claro */
+:root[data-theme="light"] {
+  --bg: #f6f8fb;
+  --surface: #ffffff;
+  --muted: #5b6b79;
+  --text: #071423;
+  --accent: #0066cc;
+  --danger: #cc3434;
+  --success: #1e9b4a;
+  --shadow: 0 6px 18px rgba(10,20,40,0.06);
+}
+
+/* Aplicação das cores */
+body {
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Cards, inputs, etc. devem herdar variáveis já definidas pelo restante do CSS. */
+.card {
+  background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+  border-radius: var(--radius);
+  padding: 12px;
+  box-shadow: var(--shadow);
+}

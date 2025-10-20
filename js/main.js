@@ -1,5 +1,5 @@
 // js/main.js - gerencia login-first flow: monta chrome apenas após autenticação
-import { login, currentUser, getSession } from './core/auth.js';
+import { getSession } from './core/auth.js';
 import { createTopbar } from './ui/topbar.js';
 import { createSidebar } from './ui/sidebar.js';
 import { initRouter } from './core/router.js';
@@ -20,14 +20,14 @@ let chromeNodes = {
 };
 
 function mountChrome() {
-  if (chromeNodes.layout) return; // já montado
+  if (chromeNodes.layout) return; // already mounted
 
   // topbar
   const topbar = createTopbar();
   document.body.insertBefore(topbar, appRoot);
   chromeNodes.topbar = topbar;
 
-  // layout com sidebar e outlet
+  // layout with sidebar and outlet
   const layout = document.createElement('div');
   layout.style.display = 'flex';
   layout.style.gap = '16px';
@@ -50,7 +50,7 @@ function mountChrome() {
   appRoot.appendChild(layout);
   chromeNodes.layout = layout;
 
-  // registrar rotas internas apenas quando chrome montado
+  // register internal routes
   initRouter(outlet, [
     { path: '/', render: (o) => { location.hash = '#/clients'; } },
     { path: '/clients', render: (o) => renderClients(o) },
@@ -79,21 +79,20 @@ function mountLoginRouteOnly() {
 }
 
 async function boot() {
-  // Inicial: montar apenas rota de login
+  // Inicial: montar apenas rota de login (garante login visível apenas)
   mountLoginRouteOnly();
 
-  // Se já há sessão (e.g., persisted), montar chrome e rotas internas
+  // Se já há sessão persistida, montar chrome e rotas internas
   const sess = await getSession();
   if (sess && sess.user) {
     mountChrome();
-    // navegar para clients por segurança
     location.hash = '#/clients';
     toast('info', 'Sessão ativa. Redirecionando...');
     return;
   }
 
-  // caso contrário, permanecer na rota /login
-  if (!location.hash || location.hash === '#/' ) location.hash = '#/login';
+  // garantir rota de login
+  if (!location.hash || location.hash === '#/') location.hash = '#/login';
 }
 
 boot();

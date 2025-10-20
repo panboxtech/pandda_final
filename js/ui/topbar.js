@@ -1,14 +1,58 @@
-// js/ui/topbar.js - topbar integrado com logout que desmonta o chrome e retorna à rota de login
+// js/ui/topbar.js - topbar com botão de alternância de tema e logout que desmonta o chrome
 import { currentUser } from '../core/auth.js';
 import { toast } from '../ui/toast.js';
 
 /**
+ * Theme handling:
+ * - Persiste escolha em localStorage key "pandda_theme"
+ * - Applies attribute data-theme="light" on document.documentElement for light theme
+ * - Default is dark (no attribute or different value)
+ */
+const THEME_KEY = 'pandda_theme';
+
+function readTheme() {
+  try {
+    const t = localStorage.getItem(THEME_KEY);
+    return t === 'light' ? 'light' : 'dark';
+  } catch (e) {
+    return 'dark';
+  }
+}
+
+function applyTheme(theme) {
+  try {
+    if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+  } catch (e) {
+    console.error('applyTheme', e);
+  }
+}
+
+function toggleTheme() {
+  const current = readTheme();
+  const next = current === 'light' ? 'dark' : 'light';
+  try {
+    localStorage.setItem(THEME_KEY, next);
+  } catch (e) {
+    console.error('theme.save', e);
+  }
+  applyTheme(next);
+  return next;
+}
+
+/**
  * createTopbar()
  * - Cria a topbar sem assumir referências externas diretas.
- * - O listener de logout usa window.__pandda_unmountChrome e window.__pandda_mountLoginRouteOnly
- *   definidos em main.js para desmontar chrome e restaurar rota de login sem reload.
+ * - Logout listener uses window.__pandda_unmountChrome and window.__pandda_mountLoginRouteOnly
+ *   defined in main.js to teardown chrome and show login route.
  */
 export function createTopbar() {
+  // ensure theme applied on creation
+  applyTheme(readTheme());
+
   const bar = document.createElement('div');
   bar.className = 'topbar container card';
   bar.style.justifyContent = 'space-between';
@@ -62,6 +106,19 @@ export function createTopbar() {
   right.style.display = 'flex';
   right.style.gap = '8px';
   right.style.alignItems = 'center';
+
+  // Theme toggle UI
+  const themeBtn = document.createElement('button');
+  themeBtn.className = 'btn';
+  themeBtn.setAttribute('aria-label', 'Alternar tema');
+  // reflect current theme in button text
+  themeBtn.textContent = readTheme() === 'light' ? '🌞' : '🌙';
+  themeBtn.addEventListener('click', () => {
+    const next = toggleTheme();
+    themeBtn.textContent = next === 'light' ? '🌞' : '🌙';
+    toast('info', `Tema alterado para ${next === 'light' ? 'claro' : 'escuro'}`);
+  });
+  right.appendChild(themeBtn);
 
   const user = currentUser();
   const userBadge = document.createElement('div');
