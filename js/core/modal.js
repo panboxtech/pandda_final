@@ -39,7 +39,7 @@ function createModalShell() {
   return { root, overlay, panel };
 }
 
-function buildField(labelText, inputEl) {
+export function buildField(labelText, inputEl) {
   const wrapper = document.createElement('div');
   wrapper.className = 'field';
   const label = document.createElement('label');
@@ -54,7 +54,7 @@ export function textInput({ name, value = '', placeholder = '' }) {
   const input = document.createElement('input');
   input.className = 'input';
   input.type = 'text';
-  input.name = name;
+  if (name) input.name = name;
   input.value = value;
   input.placeholder = placeholder;
   return input;
@@ -76,8 +76,8 @@ export function numberInput(opts) {
   const input = document.createElement('input');
   input.className = 'input';
   input.type = 'number';
-  input.name = opts.name;
-  if (opts.value !== undefined) input.value = opts.value;
+  if (opts && opts.name) input.name = opts.name;
+  if (opts && opts.value !== undefined) input.value = opts.value;
   return input;
 }
 
@@ -177,7 +177,7 @@ export function openModal({ title = '', initialData = {}, contentBuilder, onSave
   }, 50);
 
   function close() {
-    document.body.removeChild(root);
+    if (root.parentNode) document.body.removeChild(root);
     document.body.style.overflow = '';
   }
 
