@@ -1,9 +1,9 @@
 // main.js - inicializa a UI de clientes com modal de criação/edição
-import { getSession, login, currentUser } from './js/core/auth.js';
-import { openModal, textInput, emailInput, telInput, buildField } from './js/core/modal.js';
-import { listClients, createClient, updateClient, deleteClient } from './js/data/client.js';
-import { toast } from './js/ui/toast.js';
-import { canEdit, canDelete } from './js/core/access.js';
+import { getSession, login, currentUser } from './core/auth.js';
+import { openModal, textInput, emailInput, telInput, buildField } from './core/modal.js';
+import { listClients, createClient, updateClient, deleteClient } from './data/client.js';
+import { toast } from './ui/toast.js';
+import { canEdit, canDelete } from './core/access.js';
 
 const appRoot = document.getElementById('app');
 
@@ -163,7 +163,6 @@ function onCreateClient() {
     },
     onDone: (data) => {
       toast('success', 'Cliente criado com sucesso');
-      // re-render list
       const listEl = document.querySelector('.list');
       if (listEl) renderClients(listEl);
     }
@@ -212,7 +211,6 @@ function onDeleteClient(client) {
     toast('error', 'Você não tem permissão para excluir');
     return;
   }
-  // confirmation minimal
   const ok = confirm(`Excluir cliente "${client.nome}"? Esta ação é irreversível.`);
   if (!ok) return;
   deleteClient(client.id).then(res => {
@@ -227,7 +225,6 @@ function onDeleteClient(client) {
 }
 
 async function boot() {
-  // simple auto-login for prototype: admin
   await login('admin@pandda.test', 'admin');
   const user = currentUser();
 
@@ -237,7 +234,6 @@ async function boot() {
   appRoot.appendChild(header);
   appRoot.appendChild(clientsSection.wrapper);
 
-  // initial render
   renderClients(clientsSection.listEl);
 }
 
