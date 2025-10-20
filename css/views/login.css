@@ -204,3 +204,78 @@
   .field { height: 40px; }
   .btn.primary, .btn.ghost { height: 40px; min-width: 120px; font-size: 13px; }
 }
+
+/* Garantir layout flex consistente nos campos */
+.field {
+  display: flex !important;
+  align-items: center !important;    /* centraliza ícone e input verticalmente */
+  gap: 8px !important;
+  height: 44px !important;
+  padding: 8px 10px !important;
+  box-sizing: border-box !important;
+}
+
+/* Forçar o ícone a manter tamanho fixo e não interferir no fluxo */
+.field .icon {
+  flex: 0 0 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  line-height: 1 !important;
+}
+
+/* Input ocupa todo o espaço restante sem esticar além do campo */
+.field input {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;           /* evita overflow causado por max-width globais */
+  height: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Botão de ação (mostrar senha) não empurra o input nem overlap */
+.field .action {
+  flex: 0 0 auto !important;
+  margin-left: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Row de opções: alinhamento e espaço entre checkbox e label */
+.form-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+/* Tornar a label do remember um flex com espaçamento claro */
+.remember {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 13px !important;
+  white-space: nowrap !important;
+}
+
+/* Forçar estilo do checkbox para evitar transformações globais */
+.remember input[type="checkbox"] {
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  appearance: auto !important;
+  -webkit-appearance: checkbox !important;
+  flex: 0 0 auto !important;
+}
+
+/* Evitar que ícones invadam texto por overflow */
+.login-card, .field, .remember { overflow: visible !important; }
+
+/* Proteção contra regras muito genéricas */
+.login-wrapper * { box-sizing: border-box !important; }
+
