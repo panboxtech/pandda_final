@@ -1,25 +1,47 @@
-/* css/views/login.css - layout moderno e responsivo para a página de login */
+/* css/views/login.css - layout moderno, responsivo e centralizado para a página de login */
 
 .login-wrapper {
-  min-height: calc(100vh - 40px);
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px;
-  background: linear-gradient(180deg, rgba(0,0,0,0.02), transparent);
+  padding: 32px 16px;
+  background: linear-gradient(180deg, rgba(0,0,0,0.03), transparent);
 }
 
+/* Card centralizado com espaço superior perceptível */
 .login-card {
   width: 100%;
-  max-width: 440px;
+  max-width: 420px;
   background: var(--surface);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: 14px;
+  padding: 28px;
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
   align-items: stretch;
+  transform: translateY(-10px);
+}
+
+/* Logo separado acima do formulário */
+.login-logo-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+.login-logo {
+  width: 72px;
+  height: 72px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--accent), #5bd0ff);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #03212e;
+  font-weight: 800;
+  font-size: 28px;
+  box-shadow: 0 8px 22px rgba(2,6,23,0.18);
 }
 
 /* Header */
@@ -27,37 +49,30 @@
   display: flex;
   align-items: center;
   gap: 12px;
-}
-.login-logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 8px;
-  background: linear-gradient(135deg, var(--accent), #5bd0ff);
-  display: inline-flex;
-  align-items: center;
   justify-content: center;
-  font-weight: 700;
-  color: #042b33;
-  box-shadow: 0 6px 18px rgba(2,6,23,0.3);
 }
 .login-title {
   font-size: 18px;
   font-weight: 700;
   color: var(--text);
+  text-align: center;
 }
 .login-desc {
   color: var(--muted);
   font-size: 13px;
+  text-align: center;
+  margin-top: -2px;
 }
 
 /* Form */
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
   margin-top: 6px;
 }
 
+/* Campos menores, compactos e alinhados */
 .field {
   display: flex;
   align-items: center;
@@ -65,20 +80,21 @@
   background: rgba(255,255,255,0.02);
   border: 1px solid rgba(255,255,255,0.04);
   padding: 8px 10px;
-  border-radius: 8px;
+  border-radius: 10px;
+  height: 42px;
 }
 .field:focus-within {
-  box-shadow: 0 0 0 4px rgba(63,176,255,0.08);
+  box-shadow: 0 0 0 4px rgba(63,176,255,0.06);
   border-color: var(--accent);
 }
 .field .icon {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   color: var(--muted);
-  flex: 0 0 20px;
+  flex: 0 0 18px;
 }
 .field input {
   border: none;
@@ -87,11 +103,19 @@
   color: var(--text);
   font-size: 14px;
   flex: 1;
+  height: 100%;
 }
 
+/* Show password button styling (compact) */
 .field .action {
   flex: 0 0 auto;
   margin-left: 6px;
+}
+.btn.ghost.action {
+  padding: 6px 8px;
+  height: 30px;
+  font-size: 13px;
+  border-radius: 8px;
 }
 
 /* Remember and helpers */
@@ -100,7 +124,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  margin-top: 6px;
+  margin-top: 2px;
 }
 .remember {
   display: flex;
@@ -115,46 +139,53 @@
   font-size: 13px;
 }
 
-/* Buttons */
+/* Buttons compactos */
 .form-actions {
   display: flex;
   gap: 8px;
   margin-top: 6px;
-}
-.btn {
-  cursor: pointer;
+  justify-content: flex-end;
 }
 .btn.primary {
   background: linear-gradient(90deg,var(--accent),#5bd0ff);
   color: #03212e;
   border: none;
   padding: 10px 14px;
-  border-radius: 8px;
-  font-weight: 600;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 14px;
+  height: 44px;
 }
 .btn.ghost {
   background: transparent;
   border: 1px solid rgba(255,255,255,0.06);
   color: var(--text);
-  padding: 10px 14px;
-  border-radius: 8px;
+  padding: 10px 12px;
+  border-radius: 10px;
   font-weight: 600;
+  height: 44px;
 }
 
-/* Small helper text */
+/* Helper text */
 .helper {
   color: var(--muted);
-  font-size: 13px;
+  font-size: 12px;
+  text-align: center;
   margin-top: 6px;
 }
 
-/* Responsive */
-@media (max-width: 560px) {
+/* Responsive adjustments */
+@media (max-width: 520px) {
   .login-card {
-    max-width: 100%;
     padding: 18px;
-    border-radius: 10px;
+    max-width: 100%;
+    border-radius: 12px;
   }
-  .login-logo { width: 40px; height: 40px; }
-  .login-title { font-size: 16px; }
+  .login-logo {
+    width: 60px;
+    height: 60px;
+    font-size: 24px;
+  }
+  .field { height: 40px; }
+  .btn.primary, .btn.ghost { height: 40px; font-size: 13px; }
 }
