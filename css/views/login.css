@@ -3,7 +3,7 @@
    Colocar este arquivo por último nos <link> do index.html
 */
 
-/* Variáveis opcionais locais (herdam do theme.css) */
+/* Variáveis locais (herdam do theme.css) */
 :root {
   --login-max-width: 420px;
   --login-padding-vertical: 28px;
@@ -60,6 +60,16 @@
   overflow: hidden;
 }
 
+/* Garantir comportamento seguro para imagens do logo */
+.login-logo img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  overflow: clip;
+}
+
 /* Cabeçalho do card */
 .login-title {
   font-size: 18px;
@@ -87,15 +97,15 @@
 
 /* Campos compactos (input + icon + action) */
 .login-card .login-form .field {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.04);
-  padding: 8px 10px;
-  border-radius: var(--field-radius);
-  height: var(--field-height);
-  box-sizing: border-box;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  background: rgba(255,255,255,0.02) !important;
+  border: 1px solid rgba(255,255,255,0.04) !important;
+  padding: 8px 10px !important;
+  border-radius: var(--field-radius) !important;
+  height: var(--field-height) !important;
+  box-sizing: border-box !important;
   overflow: visible;
 }
 
@@ -107,12 +117,12 @@
 
 /* Icone fixo */
 .login-card .login-form .field > .icon {
-  flex: 0 0 18px;
-  width: 18px;
-  height: 18px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  flex: 0 0 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
   color: var(--muted);
   margin: 0;
   line-height: 1;
@@ -121,27 +131,27 @@
 
 /* Input ocupa o espaço restante corretamente */
 .login-card .login-form .field input {
-  flex: 1 1 auto;
-  min-width: 0;
-  height: 100%;
-  border: none;
-  outline: none;
-  background: transparent;
-  padding: 0;
-  margin: 0;
-  color: var(--text);
-  font-size: 14px;
-  box-sizing: border-box;
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  height: 100% !important;
+  border: none !important;
+  outline: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+  color: var(--text) !important;
+  font-size: 14px !important;
+  box-sizing: border-box !important;
 }
 
 /* Botão mostrar senha compacto e alinhado */
 .login-card .login-form .field > .action {
-  flex: 0 0 auto;
-  margin-left: 6px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  box-sizing: border-box;
+  flex: 0 0 auto !important;
+  margin-left: 6px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box !important;
 }
 .btn.ghost.action {
   padding: 6px 8px;
@@ -158,33 +168,33 @@
 
 /* Linha de opções: lembrar e mensagem de erro */
 .login-card .login-form .form-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
   margin-top: 2px;
-  box-sizing: border-box;
+  box-sizing: border-box !important;
 }
 .login-card .login-form .remember {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--muted);
-  font-size: 13px;
-  white-space: nowrap;
-  box-sizing: border-box;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  color: var(--muted) !important;
+  font-size: 13px !important;
+  white-space: nowrap !important;
+  box-sizing: border-box !important;
 }
 
 /* Checkbox tamanho e espaçamento */
 .login-card .login-form .remember input[type="checkbox"] {
-  width: 16px;
-  height: 16px;
-  margin: 0 6px 0 0;
-  padding: 0;
-  flex: 0 0 auto;
-  box-sizing: border-box;
-  appearance: auto;
-  -webkit-appearance: checkbox;
+  width: 16px !important;
+  height: 16px !important;
+  margin: 0 8px 0 0 !important;
+  padding: 0 !important;
+  flex: 0 0 auto !important;
+  box-sizing: border-box !important;
+  appearance: auto !important;
+  -webkit-appearance: checkbox !important;
 }
 
 /* Mensagem de erro curta, alinhada à direita */
@@ -201,17 +211,17 @@
 
 /* Ações: botões centralizados e dimensionados */
 .login-card .login-form .form-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 8px;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  box-sizing: border-box;
+  display: flex !important;
+  gap: 10px !important;
+  margin-top: 8px !important;
+  justify-content: center !important;
+  align-items: center !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
 }
 .login-card .login-form .form-actions .btn {
-  min-width: 140px;
-  box-sizing: border-box;
+  min-width: 140px !important;
+  box-sizing: border-box !important;
 }
 
 /* Estilos de botões */
@@ -245,9 +255,12 @@
   margin-top: 8px;
 }
 
-/* Proteções contra regras globais */
+/* Proteções mínimas contra regras globais sem aplicar overflow a imagens globalmente */
 .login-wrapper * { box-sizing: border-box; }
-.login-card, .login-card * { overflow: visible; }
+.login-card, .login-card > * { overflow: visible; }
+
+/* Ajuste para evitar aviso de overflow em imagens */
+.login-card img { overflow: clip; object-fit: cover; }
 
 /* Responsividade */
 @media (max-width: 520px) {
@@ -261,7 +274,7 @@
     max-width: 100%;
   }
   .login-logo { width: var(--logo-size); height: var(--logo-size); font-size: 24px; }
-  .login-card .login-form .field { height: var(--field-height); }
+  .login-card .login-form .field { height: var(--field-height) !important; }
   .btn.primary, .btn.ghost { height: 40px; min-width: 120px; font-size: 13px; }
 }
 
