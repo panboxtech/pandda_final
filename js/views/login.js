@@ -5,9 +5,10 @@ import { toast } from '../ui/toast.js';
 /**
  * renderLogin(outlet)
  * monta UI de login dentro do elemento outlet
- * Após login bem-sucedido monta chrome (topbar + sidebar) e registra rotas internas via main.js
+ * Após login bem-sucedido chama window.__pandda_mountChrome() para montar chrome e registrar rotas internas
  */
 export function renderLogin(outlet) {
+  // limpar qualquer conteúdo prévio do outlet e montar o layout de login
   outlet.innerHTML = '';
 
   const wrapper = document.createElement('div');
@@ -117,9 +118,9 @@ export function renderLogin(outlet) {
         return;
       }
       toast('success', 'Login efetuado');
-      // montar chrome e registrar rotas internas
+      // montar chrome (topbar + sidebar + routes) via main.js
       if (window.__pandda_mountChrome) window.__pandda_mountChrome();
-      // navegar para clients
+      // navegar para a rota inicial do sistema
       location.hash = '#/clients';
     } catch (err) {
       console.error('login.submit', err);
