@@ -1,0 +1,11 @@
+/* simple theme variables ready to be toggled later */
+:root {
+  --bg: #0f1723;
+  --surface: #0b1220;
+  --muted: #9aa4b2;
+  --text: #e6eef6;
+  --accent: #3fb0ff;
+  --danger: #ff6b6b;
+  --success: #2ecc71;
+}
+body { background: var(--bg); color: var(--text); }
