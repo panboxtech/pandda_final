@@ -1,34 +1,33 @@
-/* css/views/login.css - layout moderno, responsivo e centralizado para a página de login */
+/* css/views/login.css - versão revisada e mais restritiva para garantir formatação padrão de login */
 
+/* Container que centraliza verticalmente a página */
 .login-wrapper {
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 32px 16px;
+  padding: 48px 16px;
+  box-sizing: border-box;
   background: linear-gradient(180deg, rgba(0,0,0,0.03), transparent);
 }
 
 /* Card centralizado com espaço superior perceptível */
 .login-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 420px;            /* largura máxima do card */
   background: var(--surface);
   border-radius: 14px;
-  padding: 28px;
+  padding: 28px 22px;         /* padding interno confortável */
   box-shadow: var(--shadow);
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  align-items: stretch;
-  transform: translateY(-10px);
+  display: block;             /* forçar bloco (evita flex surpresa) */
+  box-sizing: border-box;
 }
 
-/* Logo separado acima do formulário */
+/* Logo posicionado acima do card interno */
 .login-logo-wrap {
   display: flex;
   justify-content: center;
-  margin-bottom: 6px;
+  margin-bottom: 10px;
 }
 .login-logo {
   width: 72px;
@@ -42,37 +41,34 @@
   font-weight: 800;
   font-size: 28px;
   box-shadow: 0 8px 22px rgba(2,6,23,0.18);
+  overflow: hidden;
 }
 
-/* Header */
-.login-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  justify-content: center;
-}
+/* Cabeçalho do card (titulo e descrição) */
 .login-title {
   font-size: 18px;
   font-weight: 700;
   color: var(--text);
   text-align: center;
+  margin-top: 4px;
 }
 .login-desc {
   color: var(--muted);
   font-size: 13px;
   text-align: center;
-  margin-top: -2px;
+  margin-top: 6px;
+  margin-bottom: 8px;
 }
 
-/* Form */
+/* Form layout */
 .login-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
-/* Campos menores, compactos e alinhados */
+/* Campos compactos */
 .field {
   display: flex;
   align-items: center;
@@ -81,12 +77,17 @@
   border: 1px solid rgba(255,255,255,0.04);
   padding: 8px 10px;
   border-radius: 10px;
-  height: 42px;
+  height: 44px;
+  box-sizing: border-box;
 }
+
+/* Foco mais visível */
 .field:focus-within {
-  box-shadow: 0 0 0 4px rgba(63,176,255,0.06);
+  box-shadow: 0 0 0 6px rgba(63,176,255,0.06);
   border-color: var(--accent);
 }
+
+/* Icone fixo */
 .field .icon {
   width: 18px;
   height: 18px;
@@ -96,35 +97,42 @@
   color: var(--muted);
   flex: 0 0 18px;
 }
+
+/* Input ocupa o espaço restante mas respeita padding do campo */
 .field input {
   border: none;
   outline: none;
   background: transparent;
   color: var(--text);
   font-size: 14px;
-  flex: 1;
+  flex: 1 1 auto;
   height: 100%;
+  box-sizing: border-box;
+  padding: 0;
 }
 
-/* Show password button styling (compact) */
-.field .action {
-  flex: 0 0 auto;
-  margin-left: 6px;
-}
+/* Botão de mostrar senha compacto */
 .btn.ghost.action {
   padding: 6px 8px;
-  height: 30px;
+  height: 32px;
   font-size: 13px;
   border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.04);
+  background: transparent;
+  color: var(--muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Remember and helpers */
+/* Row com remember e erro (garante que não estique o card) */
 .form-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   margin-top: 2px;
+  box-sizing: border-box;
 }
 .remember {
   display: flex;
@@ -133,59 +141,66 @@
   color: var(--muted);
   font-size: 13px;
 }
+
+/* Mensagem de erro ocupa uma linha curta */
 .login-error {
   color: var(--danger);
-  min-height: 18px;
+  min-width: 120px;
+  text-align: right;
   font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Buttons compactos */
+/* Ações (botões) centralizadas e com tamanho controlado */
 .form-actions {
   display: flex;
-  gap: 8px;
-  margin-top: 6px;
-  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 8px;
+  justify-content: center;      /* centraliza os botões */
+  align-items: center;
+  width: 100%;
+  box-sizing: border-box;
 }
 .btn.primary {
   background: linear-gradient(90deg,var(--accent),#5bd0ff);
   color: #03212e;
   border: none;
-  padding: 10px 14px;
+  padding: 10px 18px;
   border-radius: 10px;
   font-weight: 700;
   font-size: 14px;
   height: 44px;
+  min-width: 140px;
+  box-sizing: border-box;
 }
 .btn.ghost {
   background: transparent;
   border: 1px solid rgba(255,255,255,0.06);
   color: var(--text);
-  padding: 10px 12px;
+  padding: 10px 14px;
   border-radius: 10px;
   font-weight: 600;
   height: 44px;
+  min-width: 140px;
 }
 
-/* Helper text */
+/* Texto auxiliar abaixo do form */
 .helper {
   color: var(--muted);
   font-size: 12px;
   text-align: center;
-  margin-top: 6px;
+  margin-top: 8px;
 }
 
-/* Responsive adjustments */
+/* Pequenas proteções contra rules globais */
+.login-wrapper * { box-sizing: border-box; }
+
+/* Mobile tweaks */
 @media (max-width: 520px) {
-  .login-card {
-    padding: 18px;
-    max-width: 100%;
-    border-radius: 12px;
-  }
-  .login-logo {
-    width: 60px;
-    height: 60px;
-    font-size: 24px;
-  }
+  .login-card { padding: 18px; max-width: 100%; border-radius: 12px; }
+  .login-logo { width: 60px; height: 60px; }
   .field { height: 40px; }
-  .btn.primary, .btn.ghost { height: 40px; font-size: 13px; }
+  .btn.primary, .btn.ghost { height: 40px; min-width: 120px; font-size: 13px; }
 }
