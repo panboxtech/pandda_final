@@ -279,3 +279,80 @@
 /* Proteção contra regras muito genéricas */
 .login-wrapper * { box-sizing: border-box !important; }
 
+/* Reforço final para os campos do login - coloque no final de css/views/login.css */
+
+/* Seletor mais específico para garantir prioridade */
+.login-card .login-form .field {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.04);
+  padding: 8px 10px;
+  border-radius: 10px;
+  height: 44px;
+  box-sizing: border-box;
+}
+
+/* Ícone fixo e entrada sem overflow */
+.login-card .login-form .field > .icon {
+  flex: 0 0 18px;
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  line-height: 1;
+}
+
+/* Input ocupa o espaço restante corretamente */
+.login-card .login-form .field > input,
+.login-card .login-form .field input[type="email"],
+.login-card .login-form .field input[type="password"] {
+  flex: 1 1 auto;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+/* Botão ação (mostrar senha) compacto e alinhado */
+.login-card .login-form .field > .action {
+  flex: 0 0 auto;
+  margin-left: 6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Row remember: garantir que o checkbox não sobreponha o texto */
+.login-card .login-form .form-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.login-card .login-form .remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.login-card .login-form .remember input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  margin: 0 4px 0 0;
+  padding: 0;
+  flex: 0 0 auto;
+}
+
+/* Proteção extra se houver regras muito genéricas no projeto */
+.login-card .login-form .field,
+.login-card .login-form .form-row,
+.login-card .login-form .remember {
+  overflow: visible;
+}
