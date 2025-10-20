@@ -1,10 +1,11 @@
-// js/views/login.js - página de login
-import { login, getSession, currentUser } from '../core/auth.js';
+// js/views/login.js - página de login (dispara montagem do chrome após sucesso)
+import { login } from '../core/auth.js';
 import { toast } from '../ui/toast.js';
 
 /**
  * renderLogin(outlet)
  * monta UI de login dentro do elemento outlet
+ * Após login bem-sucedido monta chrome (topbar + sidebar) e registra rotas internas via main.js
  */
 export function renderLogin(outlet) {
   outlet.innerHTML = '';
@@ -98,7 +99,7 @@ export function renderLogin(outlet) {
   wrapper.appendChild(card);
   outlet.appendChild(wrapper);
 
-  // handlers
+  // Handlers
   form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
     errorLine.textContent = '';
@@ -116,7 +117,9 @@ export function renderLogin(outlet) {
         return;
       }
       toast('success', 'Login efetuado');
-      // optional: redirect to clients
+      // montar chrome e registrar rotas internas
+      if (window.__pandda_mountChrome) window.__pandda_mountChrome();
+      // navegar para clients
       location.hash = '#/clients';
     } catch (err) {
       console.error('login.submit', err);
@@ -128,7 +131,6 @@ export function renderLogin(outlet) {
   });
 
   btnDemoUser.addEventListener('click', async () => {
-    // quick demo login as common user
     btnDemoUser.disabled = true;
     try {
       const res = await login('user@pandda.test', 'user');
@@ -138,6 +140,7 @@ export function renderLogin(outlet) {
         return;
       }
       toast('success', 'Logado como usuário comum');
+      if (window.__pandda_mountChrome) window.__pandda_mountChrome();
       location.hash = '#/clients';
     } catch (err) {
       console.error('login.demo', err);

@@ -49,7 +49,7 @@ export function createSidebar() {
     b.style.width = '100%';
     b.style.textAlign = 'left';
     b.textContent = l.label;
-    b.addEventListener('click', () => navigateTo(l.path));
+    b.addEventListener('click', () => { location.hash = l.path; });
     nav.appendChild(b);
   });
 
