@@ -1,7 +1,7 @@
 // js/ui/sidebar.js
 // Sidebar responsiva: overlay em telas pequenas e comportamento colapsável (apenas ícones).
-// Fecha ao clicar fora (backdrop) em overlay-mode.
-// O botão de collapse não cria overlay nem bloqueia interação com a página.
+// Backdrop/overlay controlado estritamente: backdrop existe somente quando overlay-mode + open.
+// Collapse não cria overlay nem backdrop; overlay fecha ao clicar fora ou pressionar Esc.
 
 export function createSidebar() {
   const aside = document.createElement('aside');
@@ -51,6 +51,7 @@ export function createSidebar() {
     btn.addEventListener('click', () => {
       location.hash = it.path;
       if (aside.classList.contains('sidebar-overlay-open')) {
+        // close only if overlay mode
         closeOverlay();
       }
     });
@@ -71,11 +72,19 @@ export function createSidebar() {
   collapseBtn.setAttribute('aria-pressed', 'false');
   collapseBtn.title = 'Ocultar/mostrar rótulos';
   collapseBtn.textContent = '◀';
-  collapseBtn.addEventListener('click', () => {
-    // collapse must only toggle collapsed state, never overlay or backdrop
+  collapseBtn.addEventListener('click', (ev) => {
+    ev.stopPropagation();
+    // collapse must only toggle collapsed state, never create overlay/backdrop
     const collapsed = aside.classList.toggle('collapsed');
     collapseBtn.setAttribute('aria-pressed', String(collapsed));
     collapseBtn.textContent = collapsed ? '▶' : '◀';
+    // ensure no overlay/backdrop remains when collapsing
+    if (!aside.classList.contains('overlay-mode')) return;
+    // if currently overlay-open, do not convert collapse into a blocking overlay
+    if (aside.classList.contains('sidebar-overlay-open')) {
+      // keep overlay open but ensure backdrop stays behind and interactive only outside sidebar
+      // nothing else required here since overlay/backdrop are managed explicitly
+    }
   });
 
   ctrl.appendChild(collapseBtn);
@@ -87,33 +96,46 @@ export function createSidebar() {
   overlayClose.type = 'button';
   overlayClose.title = 'Fechar menu';
   overlayClose.textContent = '✕';
-  overlayClose.addEventListener('click', closeOverlay);
+  overlayClose.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeOverlay();
+  });
   aside.appendChild(overlayClose);
 
-  // backdrop element (managed by this module) to detect outside clicks
+  // backdrop element (created only when overlay open)
   let backdrop = null;
-  function ensureBackdrop() {
+  function createBackdrop() {
     if (backdrop) return;
     backdrop = document.createElement('div');
     backdrop.className = 'sidebar-backdrop';
     backdrop.setAttribute('aria-hidden', 'true');
-    backdrop.addEventListener('click', (e) => {
-      // click on backdrop closes overlay
-      closeOverlay();
-    });
+    // clicking backdrop closes overlay
+    backdrop.addEventListener('click', () => closeOverlay());
+    // insert just before the sidebar in DOM for proper stacking (backdrop behind sidebar)
     document.body.appendChild(backdrop);
+  }
+
+  function removeBackdrop() {
+    if (!backdrop) return;
+    if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
+    backdrop = null;
   }
 
   // open/close overlay
   function openOverlay() {
-    ensureBackdrop();
+    // only allowed when overlay-mode is active
+    if (!aside.classList.contains('overlay-mode')) {
+      // switch to overlay-mode if needed (fallback)
+      aside.classList.add('overlay-mode');
+    }
+    createBackdrop();
+    // small delay to allow CSS transitions
     requestAnimationFrame(() => {
       document.body.classList.add('sidebar-overlay-active');
       aside.classList.add('sidebar-overlay-open');
-      // ensure focus lands on overlay close button for accessibility
+      // focus on close button for accessibility
       overlayClose.focus();
     });
-    // trap focus basic: listen for Esc to close
     window.addEventListener('keydown', escHandler);
   }
 
@@ -121,6 +143,12 @@ export function createSidebar() {
     aside.classList.remove('sidebar-overlay-open');
     document.body.classList.remove('sidebar-overlay-active');
     window.removeEventListener('keydown', escHandler);
+    // remove backdrop after CSS transition to avoid click-capture issues
+    // use a small timeout matched to CSS transition (220ms)
+    setTimeout(() => {
+      // only remove if overlay still closed
+      if (!aside.classList.contains('sidebar-overlay-open')) removeBackdrop();
+    }, 240);
   }
 
   function escHandler(e) {
@@ -139,21 +167,15 @@ export function createSidebar() {
     const mobile = window.innerWidth <= 520;
     if (mobile) {
       aside.classList.add('overlay-mode');
-      // clear collapsed state when switching to overlay for clarity
-      aside.classList.remove('collapsed');
+      aside.classList.remove('collapsed'); // reset collapsed in overlay
     } else {
       aside.classList.remove('overlay-mode');
       aside.classList.remove('sidebar-overlay-open');
       document.body.classList.remove('sidebar-overlay-active');
-      // remove backdrop if present (non-overlay desktop)
-      if (backdrop && backdrop.parentNode) {
-        backdrop.parentNode.removeChild(backdrop);
-        backdrop = null;
-      }
+      removeBackdrop();
     }
   }
 
-  // init
   window.addEventListener('resize', onResize);
   onResize();
 

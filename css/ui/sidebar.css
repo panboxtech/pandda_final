@@ -1,7 +1,7 @@
 /* css/ui/sidebar.css
-   Sidebar overlay + collapsed (icons-only) behavior.
-   Ajustes: overlay ocupa menos espaço à direita no mobile, menor gap topo/esquerda,
-   fecha ao clicar fora (backdrop), collapse não cria overlay.
+   Ajustes finos: overlay ocupa menos largura no mobile, menor gap top/left,
+   backdrop posicionado atrás do sidebar e fecha ao clicar (JS cria/remove).
+   Collapse não bloqueia interação com a página.
 */
 
 /* Base do aside */
@@ -19,6 +19,7 @@
   transition: width 220ms ease, transform 260ms ease, opacity 220ms ease;
   position: relative;
   background: var(--surface);
+  z-index: 1410; /* ensure sidebar sits above backdrop */
 }
 
 /* Inner */
@@ -54,18 +55,15 @@
 .sidebar-controls { margin-top: auto; display: flex; justify-content: center; }
 .sidebar-collapse { padding: 6px 8px; border-radius: 8px; }
 
-/* Overlay mode (mobile and narrow desktop optional)
-   Reduce top/left spacing (previously 12px), now smaller to give more space to content.
-   Also reduce right coverage (max-width) so it doesn't occupy too much of the screen.
-*/
+/* Overlay mode (mobile) - reduced left/top gap and narrower width */
 .sidebar.overlay-mode {
   position: fixed;
   left: 6px;            /* smaller left gap */
   top: 6px;             /* smaller top gap */
   bottom: 6px;
-  z-index: 1400;
-  width: 78%;           /* slightly reduced width (leaves more content visible) */
-  max-width: 300px;     /* cap width to avoid covering too much */
+  z-index: 1410;
+  width: 72%;           /* reduced width so not taking too much right side */
+  max-width: 280px;     /* cap width to avoid covering too much */
   transform: translateY(-6px) translateX(-6px);
   opacity: 0;
   pointer-events: none;
@@ -95,19 +93,19 @@
 }
 .sidebar.overlay-mode .sidebar-overlay-close { display: inline-flex; }
 
-/* Backdrop (inserted by JS) */
+/* Backdrop (created by JS) - sits behind sidebar and dims page */
 .sidebar-backdrop {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.4);
-  z-index: 1300;
+  z-index: 1400; /* behind sidebar (1410) but above page content */
   opacity: 0;
   transition: opacity 180ms ease;
   pointer-events: auto;
 }
 body.sidebar-overlay-active .sidebar-backdrop { opacity: 1; }
 
-/* Collapsed state - icons only */
+/* Collapsed state - icons only (desktop) */
 .sidebar.collapsed {
   width: 64px !important;
   min-width: 64px !important;
@@ -125,8 +123,8 @@ body.sidebar-overlay-active .sidebar-backdrop { opacity: 1; }
   .sidebar {
     margin: 8px;
     padding: 10px;
-    width: 78%;
-    max-width: 300px;
+    width: 72%;
+    max-width: 280px;
     min-width: auto;
     position: fixed;
     left: 6px;
@@ -135,7 +133,7 @@ body.sidebar-overlay-active .sidebar-backdrop { opacity: 1; }
     transform: translateY(-6px) translateX(-6px);
     opacity: 0;
     pointer-events: none;
-    z-index: 1400;
+    z-index: 1410;
   }
   .sidebar .sidebar-brand { display: block; }
   .sidebar-overlay-close { display: inline-flex; }
