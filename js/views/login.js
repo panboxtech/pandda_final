@@ -1,7 +1,7 @@
 // js/views/login.js
 // Renderiza a página de login usando apenas DOM APIs (sem innerHTML).
-// Reutilize esta função tanto para a página isolada login.html quanto para integração SPA.
-import { login } from '../core/auth.js';
+// Agora persiste explicitamente a sessão via setSession/getSession em core/auth.js
+import { login, setSession } from '../core/auth.js';
 import { toast } from '../ui/toast.js';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -74,7 +74,6 @@ export function renderLogin(outlet) {
   logoImg.src = './assets/icons/logo-72.png';
   logoImg.alt = 'Pandda';
   logoImg.addEventListener('error', () => {
-    // fallback: plain letter using DOM
     while (logo.firstChild) logo.removeChild(logo.firstChild);
     const fallback = document.createElement('div');
     fallback.textContent = 'P';
@@ -84,7 +83,6 @@ export function renderLogin(outlet) {
     logo.appendChild(fallback);
   }, { once: true });
 
-  // apply safe sizing via attributes (CSS handles visual)
   logoImg.width = 72;
   logoImg.height = 72;
   logo.appendChild(logoImg);
@@ -162,7 +160,6 @@ export function renderLogin(outlet) {
     showing = !showing;
     inputPass.type = showing ? 'text' : 'password';
     showBtn.setAttribute('aria-pressed', String(showing));
-    // swap icons safely
     if (showBtn.firstChild) showBtn.removeChild(showBtn.firstChild);
     showBtn.appendChild(showing ? eyeOn : eyeOff);
   });
@@ -247,14 +244,23 @@ export function renderLogin(outlet) {
         submitBtn.textContent = 'Entrar';
         return;
       }
+
+      // Persistir sessão explicitamente (formato compatível com core/auth.setSession)
+      try {
+        const sessionPayload = res.session || { user: res.user || null, token: res.token || null };
+        setSession(sessionPayload);
+      } catch (e) {
+        console.error('persist.session', e);
+      }
+
       toast('success', 'Login efetuado');
-      // Dispatch event for isolated page to redirect if it listens
+
+      // Emitir evento para listeners (login-entry.js usa esse evento para redirecionar)
       try {
         window.dispatchEvent(new CustomEvent('pandda:login-success', { detail: { user: res.user || null } }));
-      } catch (e) {
-        // ignore
-      }
-      // Prefer SPA mount if available, otherwise redirect to index.html
+      } catch (e) { /* ignore */ }
+
+      // Se SPA já disponível, monte o chrome; caso contrário redirecione para index.html
       if (window.__pandda_mountChrome) {
         window.__pandda_mountChrome();
         location.hash = '#/clients';
@@ -280,10 +286,20 @@ export function renderLogin(outlet) {
         demoBtn.disabled = false;
         return;
       }
+
+      try {
+        const sessionPayload = res.session || { user: res.user || null, token: res.token || null };
+        setSession(sessionPayload);
+      } catch (e) {
+        console.error('persist.session.demo', e);
+      }
+
       toast('success', 'Logado como usuário comum');
+
       try {
         window.dispatchEvent(new CustomEvent('pandda:login-success', { detail: { user: res.user || null } }));
       } catch (e) {}
+
       if (window.__pandda_mountChrome) {
         window.__pandda_mountChrome();
         location.hash = '#/clients';

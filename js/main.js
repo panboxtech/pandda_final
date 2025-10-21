@@ -1,13 +1,12 @@
-// js/main.js - SPA principal. Assumimos login isolado em login.html.
-// main.js monta o chrome apenas quando há sessão válida.
+// js/main.js - ajuste de boot para validar sessão persistida antes de montar a SPA
 import { getSession } from './core/auth.js';
 import { createTopbar } from './ui/topbar.js';
 import { createSidebar } from './ui/sidebar.js';
 import { initRouter } from './core/router.js';
+import { renderClients } from './views/clients.js';
 import { renderPlans } from './views/plans.js';
 import { renderApps } from './views/apps.js';
 import { renderServers } from './views/servers.js';
-import { renderClients } from './views/clients.js';
 import { toast } from './ui/toast.js';
 
 const appRoot = document.getElementById('app');
@@ -66,15 +65,13 @@ function unmountChrome() {
 }
 
 async function boot() {
-  // SPA principal espera sessão; se não houver, redireciona para login.html
+  // Lê sessão persistida; se não houver, vai para login isolado
   const sess = await getSession();
   if (!sess || !sess.user) {
-    // redireciona para a página isolada de login
     window.location.href = './login.html';
     return;
   }
 
-  // montar chrome e iniciar aplicação
   mountChrome();
   location.hash = '#/clients';
   toast('info', 'Sessão ativa. Bem-vindo.');
@@ -82,6 +79,5 @@ async function boot() {
 
 boot();
 
-// Expor unmount para topbar/logout
 window.__pandda_unmountChrome = unmountChrome;
 window.__pandda_mountChrome = mountChrome;
