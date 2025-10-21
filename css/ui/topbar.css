@@ -1,0 +1,161 @@
+/* css/ui/topbar.css
+   Topbar full-width visual, conteúdo alinhado entre duas guias verticais,
+   botão de collapse ancorado à esquerda (fixo) e não desloca com resize da sidebar.
+   Altura reduzida para aparência compacta.
+*/
+
+/* Defaults de variáveis que você pode sobrescrever no runtime ou em outro CSS */
+:root {
+  --topbar-height: 48px;
+  --topbar-min-height: 44px;
+  --topbar-bg: var(--surface, #071420);
+  --topbar-border: rgba(255,255,255,0.02);
+  --topbar-inner-left-guide: 96px;   /* ajuste conforme suas guias verticais */
+  --topbar-inner-right-guide: 96px;  /* ajuste conforme suas guias verticais */
+  --topbar-inner-left-fallback: 96px;
+  --topbar-inner-right-fallback: 24px;
+  --topbar-collapse-left: 12px;      /* distância do botão collapse à esquerda da viewport */
+}
+
+/* Barra superior — ocupa largura total do viewport */
+.topbar {
+  position: relative;
+  width: 100%;
+  min-height: var(--topbar-min-height);
+  height: var(--topbar-height);
+  box-sizing: border-box;
+  background: var(--topbar-bg);
+  border-bottom: 1px solid var(--topbar-border);
+  z-index: 1500;
+  display: block;
+}
+
+/* Anchor absoluto para o botão de collapse, fixo na esquerda da viewport.
+   Fica acima da topbar visualmente, não se move com mudanças na sidebar. */
+.topbar-collapse-anchor {
+  position: absolute;
+  left: var(--topbar-collapse-left);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1600;
+  pointer-events: auto;
+}
+
+/* Botão de collapse: compacto, visual consistente */
+.topbar-collapse {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+  box-sizing: border-box;
+}
+
+/* Wrapper interno: conteúdo alinhado entre duas guias.
+   Calcula largura disponível subtraindo as distâncias das guias para manter alinhamento centralizado. */
+.topbar-inner {
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 100%;
+  /* padding definido pelas guias; o elemento ocupa o centro horizontal */
+  padding-left: var(--topbar-inner-left-guide, var(--topbar-inner-left-fallback));
+  padding-right: var(--topbar-inner-right-guide, var(--topbar-inner-right-fallback));
+  width: calc(100% - (var(--topbar-inner-left-guide, var(--topbar-inner-left-fallback)) + var(--topbar-inner-right-guide, var(--topbar-inner-right-fallback))));
+  margin-left: auto;
+  margin-right: auto;
+  max-width: none; /* permitir expansão além de limites preset */
+}
+
+/* Se preferir que inner nunca tenha largura negativa em telas pequenas */
+@media (max-width: 520px) {
+  .topbar-inner {
+    width: calc(100% - 16px);
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+/* Elementos dentro do inner: left (brand) and right (actions) */
+.topbar-left,
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+/* Marca/brand reduzida para caber na topbar compacta */
+.topbar-brand {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1;
+  white-space: nowrap;
+  color: inherit;
+  display: inline-block;
+  padding: 0 6px 0 0;
+}
+
+/* Ações do lado direito (theme, logout, etc.) */
+.topbar-actions .btn {
+  height: 32px;
+  padding: 0 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: inherit;
+}
+
+/* Pequenas otimizações visuais */
+.topbar .topbar-brand,
+.topbar .topbar-actions .btn {
+  transition: opacity 140ms ease, transform 140ms ease;
+}
+
+/* Se houver comportamento de collapsed-brand controlado pela sidebar,
+   o brand pode ser escondido via classe aplicada no aside (.brand-hidden) */
+.sidebar.brand-hidden ~ .topbar .topbar-inner .topbar-left .topbar-brand,
+.sidebar.brand-hidden + .app-layout .topbar .topbar-inner .topbar-left .topbar-brand {
+  opacity: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+  transform: translateY(-2px);
+}
+
+/* Caso queira o botão collapse sempre visível no topo, garantir foco e contraste */
+.topbar-collapse:focus {
+  outline: 2px solid rgba(63,176,255,0.16);
+  outline-offset: 2px;
+}
+
+/* Ajustes finos para hover/active */
+.topbar-collapse:hover { background: rgba(255,255,255,0.02); }
+.topbar-actions .btn:hover { background: rgba(255,255,255,0.02); }
+
+/* Responsividade: ajustar posição do anchor em telas muito pequenas */
+@media (max-width: 520px) {
+  :root { --topbar-collapse-left: 8px; }
+  .topbar { height: 46px; min-height: 44px; }
+  .topbar-collapse { width: 34px; height: 34px; }
+  .topbar-brand { font-size: 13px; }
+}
+
+/* Utility: permitir sobrepor variáveis via JS ou outros CSS para alinhar exatamente com as guias visuais.
+   Exemplos (JS):
+     document.documentElement.style.setProperty('--topbar-inner-left-guide', '96px');
+     document.documentElement.style.setProperty('--topbar-inner-right-guide', '96px');
+     document.documentElement.style.setProperty('--topbar-collapse-left', '12px');
+*/
