@@ -1,9 +1,8 @@
 /* css/ui/sidebar.css
-   Desktop: no overlay; collapse minimiza para ícones e remove marca (brand-hidden).
-   Mobile: overlay mode with reduced width (~20% smaller than before).
+   Desktop: no overlay; collapse minimiza para ícones e oculta a marca.
+   Mobile: overlay with reduced width (~20% smaller).
 */
 
-/* Base do aside */
 .sidebar {
   width: 220px;
   min-width: 220px;
@@ -15,21 +14,19 @@
   flex-direction: column;
   gap: 12px;
   box-sizing: border-box;
-  transition: width 220ms ease, transform 260ms ease, opacity 220ms ease;
+  transition: width 200ms ease, transform 220ms ease, opacity 180ms ease;
   position: relative;
   background: var(--surface);
   z-index: 1410;
 }
 
-/* Inner */
 .sidebar .sidebar-inner { display: flex; flex-direction: column; gap: 12px; height: 100%; }
 
-/* Brand (can be hidden in collapsed desktop) */
 .sidebar-brand {
   font-weight: 800;
   font-size: 16px;
   padding: 6px 8px;
-  transition: opacity 180ms ease, height 180ms ease, margin 180ms ease;
+  transition: opacity 160ms ease, height 160ms ease, margin 160ms ease;
 }
 .sidebar.brand-hidden .sidebar-brand {
   opacity: 0;
@@ -40,10 +37,7 @@
   pointer-events: none;
 }
 
-/* List */
 .sidebar-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 6px; overflow: auto; }
-.sidebar-item { display: block; }
-
 .sidebar-btn {
   width: 100%;
   display: flex;
@@ -63,18 +57,26 @@
 .sidebar-icon { width: 28px; display: inline-flex; align-items: center; justify-content: center; font-size: 16px; }
 .sidebar-label { flex: 1 1 auto; font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-/* Controls */
 .sidebar-controls { margin-top: auto; display: flex; justify-content: center; }
 .sidebar-collapse { padding: 6px 8px; border-radius: 8px; }
 
-/* Overlay mode (mobile) - reduced left/top gap and narrower width (aprox 20% menor) */
+/* Desktop collapsed - icons only */
+.sidebar.collapsed {
+  width: 64px !important;
+  min-width: 64px !important;
+  max-width: 64px !important;
+}
+.sidebar.collapsed .sidebar-label { display: none; }
+.sidebar.collapsed .sidebar-btn { justify-content: center; padding: 10px 6px; }
+
+/* Overlay mode (mobile) - reduced width (~20% smaller) */
 .sidebar.overlay-mode {
   position: fixed;
   left: 6px;
   top: 6px;
   bottom: 6px;
   z-index: 1410;
-  width: 60%;           /* reduzido: cerca de 20% menos que valores anteriores maiores */
+  width: 60%;          /* reduced width for mobile overlay */
   max-width: 280px;
   transform: translateY(-6px) translateX(-6px);
   opacity: 0;
@@ -84,14 +86,13 @@
   background: var(--surface);
 }
 
-/* When overlay open */
 .sidebar.overlay-mode.sidebar-overlay-open {
   transform: translateY(0) translateX(0);
   opacity: 1;
   pointer-events: auto;
 }
 
-/* overlay close button (top-right) */
+/* overlay close button */
 .sidebar-overlay-close {
   position: absolute;
   top: 6px;
@@ -117,19 +118,6 @@
 }
 body.sidebar-overlay-active .sidebar-backdrop { opacity: 1; }
 
-/* Collapsed state - icons only (desktop) */
-.sidebar.collapsed {
-  width: 64px !important;
-  min-width: 64px !important;
-  max-width: 64px !important;
-}
-/* Hide labels when collapsed */
-.sidebar.collapsed .sidebar-label { display: none; }
-.sidebar.collapsed .sidebar-btn { justify-content: center; padding: 10px 6px; }
-
-/* Accessibility: focus styles */
-.sidebar-btn:focus { outline: 2px solid rgba(63,176,255,0.14); outline-offset: 2px; }
-
 /* Small screens adjustments */
 @media (max-width: 520px) {
   .sidebar {
@@ -151,5 +139,5 @@ body.sidebar-overlay-active .sidebar-backdrop { opacity: 1; }
   .sidebar-overlay-close { display: inline-flex; }
 }
 
-/* subtle divider between sidebar and content when expanded */
+/* divider between sidebar and content when expanded */
 .app-layout > .sidebar + #outlet { border-left: 1px solid rgba(255,255,255,0.02); }

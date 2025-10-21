@@ -1,25 +1,20 @@
 // js/ui/sidebar.js
 // Sidebar responsiva: desktop sem overlay; collapse minimiza para ícones e oculta a marca.
-// Mobile mantém comportamento overlay; largura reduzida (aprox 20% menor que antes).
-// Backdrop existe apenas em overlay-mode e é gerenciado estritamente.
-
+// Mobile mantém overlay; backdrop criado somente em overlay-mode.
 export function createSidebar() {
   const aside = document.createElement('aside');
   aside.className = 'sidebar card';
   aside.setAttribute('aria-label', 'Navegação');
 
-  // container interno
   const inner = document.createElement('nav');
   inner.className = 'sidebar-inner';
   aside.appendChild(inner);
 
-  // brand
   const brand = document.createElement('div');
   brand.className = 'sidebar-brand';
   brand.textContent = 'Pandda';
   inner.appendChild(brand);
 
-  // nav list
   const ul = document.createElement('ul');
   ul.className = 'sidebar-list';
 
@@ -50,9 +45,8 @@ export function createSidebar() {
 
     btn.addEventListener('click', () => {
       location.hash = it.path;
-      if (aside.classList.contains('sidebar-overlay-open')) {
-        closeOverlay();
-      }
+      // se estiver em overlay-mode e aberto, fechar
+      if (aside.classList.contains('sidebar-overlay-open')) closeOverlay();
     });
 
     li.appendChild(btn);
@@ -61,7 +55,6 @@ export function createSidebar() {
 
   inner.appendChild(ul);
 
-  // controls container
   const ctrl = document.createElement('div');
   ctrl.className = 'sidebar-controls';
 
@@ -73,23 +66,19 @@ export function createSidebar() {
   collapseBtn.textContent = '◀';
   collapseBtn.addEventListener('click', (ev) => {
     ev.stopPropagation();
-    // toggle collapsed state
     const collapsed = aside.classList.toggle('collapsed');
     collapseBtn.setAttribute('aria-pressed', String(collapsed));
     collapseBtn.textContent = collapsed ? '▶' : '◀';
 
-    // When collapsed on desktop, hide the brand (Pandda) for compact view
-    if (collapsed && !aside.classList.contains('overlay-mode')) {
-      aside.classList.add('brand-hidden');
-    } else {
-      aside.classList.remove('brand-hidden');
+    // no desktop, quando colapsar, ocultar a marca para ficar apenas ícone
+    if (!aside.classList.contains('overlay-mode')) {
+      if (collapsed) aside.classList.add('brand-hidden'); else aside.classList.remove('brand-hidden');
     }
   });
 
   ctrl.appendChild(collapseBtn);
   inner.appendChild(ctrl);
 
-  // overlay close button (visible in overlay mode)
   const overlayClose = document.createElement('button');
   overlayClose.className = 'sidebar-overlay-close';
   overlayClose.type = 'button';
@@ -101,7 +90,7 @@ export function createSidebar() {
   });
   aside.appendChild(overlayClose);
 
-  // backdrop element (created only when overlay open)
+  // backdrop will be created only when opening overlay-mode
   let backdrop = null;
   function createBackdrop() {
     if (backdrop) return;
@@ -111,18 +100,15 @@ export function createSidebar() {
     backdrop.addEventListener('click', () => closeOverlay());
     document.body.appendChild(backdrop);
   }
-
   function removeBackdrop() {
     if (!backdrop) return;
     if (backdrop.parentNode) backdrop.parentNode.removeChild(backdrop);
     backdrop = null;
   }
 
-  // open/close overlay (only for overlay-mode)
   function openOverlay() {
-    if (!aside.classList.contains('overlay-mode')) {
-      aside.classList.add('overlay-mode');
-    }
+    // only allow overlay if overlay-mode active; if not, enable overlay-mode then open (fallback)
+    if (!aside.classList.contains('overlay-mode')) aside.classList.add('overlay-mode');
     createBackdrop();
     requestAnimationFrame(() => {
       document.body.classList.add('sidebar-overlay-active');
@@ -145,14 +131,11 @@ export function createSidebar() {
     if (e.key === 'Escape') closeOverlay();
   }
 
-  // Expose methods
   aside.openOverlay = openOverlay;
   aside.closeOverlay = closeOverlay;
-  aside.toggleOverlay = () => {
-    if (aside.classList.contains('sidebar-overlay-open')) closeOverlay(); else openOverlay();
-  };
+  aside.toggleOverlay = () => { if (aside.classList.contains('sidebar-overlay-open')) closeOverlay(); else openOverlay(); };
 
-  // Responsive behavior: overlay only on small screens
+  // responsive: overlay-mode only on mobile
   function onResize() {
     const mobile = window.innerWidth <= 520;
     if (mobile) {
@@ -160,17 +143,14 @@ export function createSidebar() {
       aside.classList.remove('collapsed');
       aside.classList.remove('brand-hidden');
     } else {
-      // Desktop: ensure no overlay, remove overlay classes and backdrop
+      // desktop: no overlay behavior
       aside.classList.remove('overlay-mode');
       aside.classList.remove('sidebar-overlay-open');
       document.body.classList.remove('sidebar-overlay-active');
       removeBackdrop();
-      // Keep collapsed state if user toggled it; when collapsed on desktop, hide brand
-      if (aside.classList.contains('collapsed')) {
-        aside.classList.add('brand-hidden');
-      } else {
-        aside.classList.remove('brand-hidden');
-      }
+      // keep collapsed state effect on brand
+      if (aside.classList.contains('collapsed')) aside.classList.add('brand-hidden');
+      else aside.classList.remove('brand-hidden');
     }
   }
 
