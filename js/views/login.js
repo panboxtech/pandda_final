@@ -1,109 +1,107 @@
-// js/views/login.js - versão sem innerHTML nem injeção de HTML (tudo criado via DOM APIs)
+// js/views/login.js
+// Renderiza a página de login usando apenas DOM APIs (sem innerHTML).
+// Reutilize esta função tanto para a página isolada login.html quanto para integração SPA.
 import { login } from '../core/auth.js';
 import { toast } from '../ui/toast.js';
 
-/* Helpers SVG criados via createElementNS para evitar innerHTML */
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
-function createSvgElement(tag, attrs = {}) {
+function createSvg(tag, attrs = {}) {
   const el = document.createElementNS(SVG_NS, tag);
   for (const [k, v] of Object.entries(attrs)) {
-    if (k === 'textContent') el.textContent = v;
-    else el.setAttribute(k, String(v));
+    el.setAttribute(k, String(v));
   }
   return el;
 }
 
+function iconWrapper(svgEl) {
+  const span = document.createElement('span');
+  span.className = 'icon';
+  span.appendChild(svgEl);
+  return span;
+}
+
 function svgUser() {
-  const wrapper = document.createElement('span');
-  wrapper.className = 'icon';
-  const svg = createSvgElement('svg', { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', 'aria-hidden': 'true', focusable: 'false' });
-  const p1 = createSvgElement('path', { d: 'M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
-  const p2 = createSvgElement('path', { d: 'M20 22v-1c0-2.761-2.239-5-5-5H9c-2.761 0-5 2.239-5 5v1', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
-  svg.appendChild(p1); svg.appendChild(p2); wrapper.appendChild(svg);
-  return wrapper;
+  const svg = createSvg('svg', { width: '16', height: '16', viewBox: '0 0 24 24', fill: 'none', 'aria-hidden': 'true', focusable: 'false' });
+  svg.appendChild(createSvg('path', { d: 'M12 12c2.761 0 5-2.239 5-5s-2.239-5-5-5-5 2.239-5 5 2.239 5 5 5z', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+  svg.appendChild(createSvg('path', { d: 'M20 22v-1c0-2.761-2.239-5-5-5H9c-2.761 0-5 2.239-5 5v1', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+  return iconWrapper(svg);
 }
 
 function svgLock() {
-  const wrapper = document.createElement('span');
-  wrapper.className = 'icon';
-  const svg = createSvgElement('svg', { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', 'aria-hidden': 'true', focusable: 'false' });
-  const r = createSvgElement('rect', { x: 3, y: 11, width: 18, height: 11, rx: 2, stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
-  const p = createSvgElement('path', { d: 'M7 11V8a5 5 0 0110 0v3', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
-  svg.appendChild(r); svg.appendChild(p); wrapper.appendChild(svg);
-  return wrapper;
+  const svg = createSvg('svg', { width: '16', height: '16', viewBox: '0 0 24 24', fill: 'none', 'aria-hidden': 'true', focusable: 'false' });
+  svg.appendChild(createSvg('rect', { x: '3', y: '11', width: '18', height: '11', rx: '2', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+  svg.appendChild(createSvg('path', { d: 'M7 11V8a5 5 0 0110 0v3', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+  return iconWrapper(svg);
 }
 
 function svgEye() {
-  const wrapper = document.createElement('span');
-  wrapper.className = 'icon';
-  const svg = createSvgElement('svg', { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', 'aria-hidden': 'true', focusable: 'false' });
-  const p1 = createSvgElement('path', { d: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
-  const c = createSvgElement('circle', { cx: 12, cy: 12, r: 3, stroke: 'currentColor', 'stroke-width': '1.4' });
-  svg.appendChild(p1); svg.appendChild(c); wrapper.appendChild(svg);
-  return wrapper;
+  const svg = createSvg('svg', { width: '16', height: '16', viewBox: '0 0 24 24', fill: 'none', 'aria-hidden': 'true', focusable: 'false' });
+  svg.appendChild(createSvg('path', { d: 'M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+  svg.appendChild(createSvg('circle', { cx: '12', cy: '12', r: '3', stroke: 'currentColor', 'stroke-width': '1.4' }));
+  return iconWrapper(svg);
 }
 
 function svgEyeOff() {
-  const wrapper = document.createElement('span');
-  wrapper.className = 'icon';
-  const svg = createSvgElement('svg', { width: 16, height: 16, viewBox: '0 0 24 24', fill: 'none', 'aria-hidden': 'true', focusable: 'false' });
-  const p1 = createSvgElement('path', { d: 'M17.94 17.94A10.94 10.94 0 0112 19c-6 0-10-7-10-7a20.2 20.2 0 014.3-5.3', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
-  const p2 = createSvgElement('path', { d: 'M1 1l22 22', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' });
-  svg.appendChild(p1); svg.appendChild(p2); wrapper.appendChild(svg);
-  return wrapper;
+  const svg = createSvg('svg', { width: '16', height: '16', viewBox: '0 0 24 24', fill: 'none', 'aria-hidden': 'true', focusable: 'false' });
+  svg.appendChild(createSvg('path', { d: 'M17.94 17.94A10.94 10.94 0 0112 19c-6 0-10-7-10-7a20.2 20.2 0 014.3-5.3', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+  svg.appendChild(createSvg('path', { d: 'M1 1l22 22', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }));
+  return iconWrapper(svg);
 }
 
-/* Main render function - creates all nodes via DOM APIs */
 export function renderLogin(outlet) {
-  // ensure outlet is clean
-  outlet.innerHTML = '';
+  if (!outlet) return;
 
+  // Clear outlet
+  while (outlet.firstChild) outlet.removeChild(outlet.firstChild);
+
+  // Wrapper
   const wrapper = document.createElement('div');
   wrapper.className = 'login-wrapper';
 
+  // Card
   const card = document.createElement('div');
   card.className = 'login-card card';
+  card.setAttribute('role', 'main');
 
-  // Logo area
+  // Logo wrap
   const logoWrap = document.createElement('div');
   logoWrap.className = 'login-logo-wrap';
   const logo = document.createElement('div');
   logo.className = 'login-logo';
 
-  // Prefer image asset if exists; fallback to text only if image fails
-  const img = document.createElement('img');
-  img.alt = 'Pandda';
-  img.src = './assets/icons/logo-72.png';
-  img.style.width = '100%';
-  img.style.height = '100%';
-  img.style.objectFit = 'cover';
-  img.style.borderRadius = '10px';
-  img.addEventListener('error', () => {
-    // fallback: if image not found, show letter without using innerHTML
+  const logoImg = document.createElement('img');
+  logoImg.src = './assets/icons/logo-72.png';
+  logoImg.alt = 'Pandda';
+  logoImg.addEventListener('error', () => {
+    // fallback: plain letter using DOM
     while (logo.firstChild) logo.removeChild(logo.firstChild);
-    const txt = document.createElement('div');
-    txt.textContent = 'P';
-    txt.style.fontWeight = '800';
-    txt.style.fontSize = '28px';
-    logo.appendChild(txt);
+    const fallback = document.createElement('div');
+    fallback.textContent = 'P';
+    fallback.style.fontWeight = '800';
+    fallback.style.fontSize = '28px';
+    fallback.style.color = '#03212e';
+    logo.appendChild(fallback);
   }, { once: true });
 
-  logo.appendChild(img);
+  // apply safe sizing via attributes (CSS handles visual)
+  logoImg.width = 72;
+  logoImg.height = 72;
+  logo.appendChild(logoImg);
   logoWrap.appendChild(logo);
   card.appendChild(logoWrap);
 
   // Header text
-  const headText = document.createElement('div');
+  const head = document.createElement('div');
   const title = document.createElement('div');
   title.className = 'login-title';
   title.textContent = 'Acesse sua conta';
   const desc = document.createElement('div');
   desc.className = 'login-desc';
   desc.textContent = 'Use sua conta de protótipo (admin/user) para entrar.';
-  headText.appendChild(title);
-  headText.appendChild(desc);
-  card.appendChild(headText);
+  head.appendChild(title);
+  head.appendChild(desc);
+  card.appendChild(head);
 
   // Form
   const form = document.createElement('form');
@@ -126,6 +124,7 @@ export function renderLogin(outlet) {
   inputEmail.autocomplete = 'username';
   inputEmail.required = true;
   inputEmail.value = 'admin@pandda.test';
+  inputEmail.setAttribute('aria-label', 'E-mail');
   fieldEmail.appendChild(inputEmail);
   form.appendChild(fieldEmail);
 
@@ -144,55 +143,62 @@ export function renderLogin(outlet) {
   inputPass.autocomplete = 'current-password';
   inputPass.required = true;
   inputPass.value = 'admin';
+  inputPass.setAttribute('aria-label', 'Senha');
   fieldPass.appendChild(inputPass);
 
-  // show/hide button (uses DOM API only)
+  // Show/hide password button
   const showBtn = document.createElement('button');
   showBtn.type = 'button';
   showBtn.className = 'btn ghost action';
   showBtn.setAttribute('aria-label', 'Mostrar senha');
   showBtn.setAttribute('aria-pressed', 'false');
   let showing = false;
-  const eyeOnEl = svgEye();
-  const eyeOffEl = svgEyeOff();
-  showBtn.appendChild(eyeOffEl);
+  const eyeOn = svgEye();
+  const eyeOff = svgEyeOff();
+  showBtn.appendChild(eyeOff);
 
   showBtn.addEventListener('click', (ev) => {
     ev.preventDefault();
     showing = !showing;
     inputPass.type = showing ? 'text' : 'password';
     showBtn.setAttribute('aria-pressed', String(showing));
-    // swap icon nodes
+    // swap icons safely
     if (showBtn.firstChild) showBtn.removeChild(showBtn.firstChild);
-    showBtn.appendChild(showing ? eyeOnEl : eyeOffEl);
+    showBtn.appendChild(showing ? eyeOn : eyeOff);
   });
 
   fieldPass.appendChild(showBtn);
   form.appendChild(fieldPass);
 
-  // options row (remember + error)
+  // Remember + error row
   const rowOptions = document.createElement('div');
   rowOptions.className = 'form-row';
 
   const remember = document.createElement('label');
   remember.className = 'remember';
+  remember.setAttribute('for', 'remember-cb');
+
   const cb = document.createElement('input');
   cb.type = 'checkbox';
+  cb.id = 'remember-cb';
   cb.name = 'remember';
   cb.checked = true;
+  cb.setAttribute('aria-label', 'Manter sessão');
   remember.appendChild(cb);
+
   const rbText = document.createElement('span');
   rbText.textContent = 'Manter sessão (apenas protótipo)';
   remember.appendChild(rbText);
+  rowOptions.appendChild(remember);
 
   const errorLine = document.createElement('div');
   errorLine.className = 'login-error';
-
-  rowOptions.appendChild(remember);
+  errorLine.setAttribute('aria-live', 'polite');
   rowOptions.appendChild(errorLine);
+
   form.appendChild(rowOptions);
 
-  // actions
+  // Actions
   const actions = document.createElement('div');
   actions.className = 'form-actions';
 
@@ -210,7 +216,7 @@ export function renderLogin(outlet) {
   actions.appendChild(submitBtn);
   form.appendChild(actions);
 
-  // helper text
+  // Helper text
   const helper = document.createElement('div');
   helper.className = 'helper';
   helper.textContent = 'Credenciais de teste: admin@pandda.test / admin  •  user@pandda.test / user';
@@ -220,29 +226,41 @@ export function renderLogin(outlet) {
   wrapper.appendChild(card);
   outlet.appendChild(wrapper);
 
-  // accessibility: focus first input
-  setTimeout(() => { inputEmail.focus(); }, 40);
+  // Focus first input (non-blocking)
+  setTimeout(() => inputEmail.focus(), 40);
 
-  // submit handler
+  // Form submit handler
   form.addEventListener('submit', async (ev) => {
     ev.preventDefault();
     errorLine.textContent = '';
     submitBtn.disabled = true;
     submitBtn.textContent = 'Entrando...';
     try {
-      const email = inputEmail.value.trim();
-      const password = inputPass.value;
+      const email = String(inputEmail.value || '').trim();
+      const password = String(inputPass.value || '');
       const res = await login(email, password);
-      if (!res.success) {
-        errorLine.textContent = res.error.message || 'Credenciais inválidas';
-        toast('error', res.error.message || 'Erro no login');
+      if (!res || !res.success) {
+        const msg = (res && res.error && res.error.message) ? res.error.message : 'Credenciais inválidas';
+        errorLine.textContent = msg;
+        toast('error', msg);
         submitBtn.disabled = false;
         submitBtn.textContent = 'Entrar';
         return;
       }
       toast('success', 'Login efetuado');
-      if (window.__pandda_mountChrome) window.__pandda_mountChrome();
-      location.hash = '#/clients';
+      // Dispatch event for isolated page to redirect if it listens
+      try {
+        window.dispatchEvent(new CustomEvent('pandda:login-success', { detail: { user: res.user || null } }));
+      } catch (e) {
+        // ignore
+      }
+      // Prefer SPA mount if available, otherwise redirect to index.html
+      if (window.__pandda_mountChrome) {
+        window.__pandda_mountChrome();
+        location.hash = '#/clients';
+      } else {
+        location.href = './index.html#/clients';
+      }
     } catch (err) {
       console.error('login.submit', err);
       errorLine.textContent = 'Erro inesperado';
@@ -252,18 +270,26 @@ export function renderLogin(outlet) {
     }
   });
 
+  // Demo login handler
   demoBtn.addEventListener('click', async () => {
     demoBtn.disabled = true;
     try {
       const res = await login('user@pandda.test', 'user');
-      if (!res.success) {
-        toast('error', res.error.message || 'Erro no login demo');
+      if (!res || !res.success) {
+        toast('error', (res && res.error && res.error.message) ? res.error.message : 'Erro no login demo');
         demoBtn.disabled = false;
         return;
       }
       toast('success', 'Logado como usuário comum');
-      if (window.__pandda_mountChrome) window.__pandda_mountChrome();
-      location.hash = '#/clients';
+      try {
+        window.dispatchEvent(new CustomEvent('pandda:login-success', { detail: { user: res.user || null } }));
+      } catch (e) {}
+      if (window.__pandda_mountChrome) {
+        window.__pandda_mountChrome();
+        location.hash = '#/clients';
+      } else {
+        location.href = './index.html#/clients';
+      }
     } catch (err) {
       console.error('login.demo', err);
       toast('error', 'Erro inesperado');
