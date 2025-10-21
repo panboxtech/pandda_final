@@ -282,4 +282,37 @@
 .login-card .login-form input::placeholder { color: rgba(158,170,181,0.7); }
 .login-card .login-form .field:focus-within input { outline: none; }
 
+/* Ajuste fino: tornar o botão de mostrar senha mais quadrado em mobile */
+.login-card .login-form .field > .action,
+.login-card .login-form .btn.ghost.action {
+  padding: 6px 6px;           /* reduzir padding horizontal */
+  width: 34px;                /* largura fixa próxima ao ícone */
+  min-width: 34px;            /* evita expandir além do desejado */
+  height: 34px;               /* altura fixa para ficar quadrado */
+  border-radius: 8px;         /* manter cantos suaves */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Pequeno ajuste adicional para garantir que o SVG não tenha margem extra */
+.login-card .login-form .field > .action svg,
+.login-card .login-form .btn.ghost.action svg {
+  width: 16px;
+  height: 16px;
+  display: block;
+}
+
+/* Variante específica para telas muito pequenas */
+@media (max-width: 380px) {
+  .login-card .login-form .field > .action,
+  .login-card .login-form .btn.ghost.action {
+    width: 32px;
+    min-width: 32px;
+    height: 32px;
+    padding: 4px;
+    border-radius: 7px;
+  }
+}
+
 /* End of file */
