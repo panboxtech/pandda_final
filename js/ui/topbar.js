@@ -1,7 +1,7 @@
 // js/ui/topbar.js
-// Topbar que usa um wrapper interno (.topbar-inner) alinhado ao início da sidebar.
-// O wrapper ajusta sua margin-left dinamicamente conforme a largura da sidebar.
-// Toggle do menu: abre overlay no mobile (overlay-mode) e colapsa a sidebar no desktop.
+// Topbar otimizada: barra praticamente full-width horizontal, altura reduzida,
+// botão de collapse à esquerda (junto ao início da sidebar), conteúdo à direita.
+// Mantém função de toggle que abre overlay no mobile e colapsa no desktop.
 
 import { toast } from '../ui/toast.js';
 
@@ -41,24 +41,20 @@ function toggleTheme() {
 }
 
 /**
- * Update CSS custom properties used to align .topbar-inner with the sidebar.
- * Reads the current sidebar element (window.__pandda_sidebar or querySelector).
+ * Sincroniza variáveis de CSS relativas à sidebar.
+ * Usado pelo layout para alinhar e ajustar margens quando sidebar muda.
  */
 function syncTopbarWithSidebar() {
   const sidebar = window.__pandda_sidebar || document.querySelector('aside.sidebar');
   const root = document.documentElement;
-  // Defaults
-  let leftOffset = 14; // matches sidebar margin left default
+  let leftOffset = 14;
   let sidebarWidth = 220;
   let collapsedWidth = 64;
 
   if (sidebar && sidebar.getBoundingClientRect) {
     const rect = sidebar.getBoundingClientRect();
-    // compute left offset relative to viewport left (use rect.left)
     leftOffset = Math.max(0, Math.round(rect.left));
-    // prefer CSS width when available
     sidebarWidth = Math.round(rect.width) || sidebarWidth;
-    // collapsed width fallback from class
     if (sidebar.classList.contains('collapsed')) {
       collapsedWidth = Math.round(rect.width) || collapsedWidth;
     }
@@ -71,76 +67,99 @@ function syncTopbarWithSidebar() {
 
 export function createTopbar() {
   applyTheme(readTheme());
-  // container (full-width bar)
+
+  // topbar container (full width)
   const bar = document.createElement('div');
   bar.className = 'topbar container card';
+  // Make bar full-width visually and reduce vertical size
   bar.style.position = 'sticky';
   bar.style.top = '0';
   bar.style.left = '0';
+  bar.style.width = '100%';
   bar.style.zIndex = '1500';
+  bar.style.boxSizing = 'border-box';
+  bar.style.height = '44px'; // reduced vertical height
+  bar.style.minHeight = '44px';
+  bar.style.display = 'flex';
+  bar.style.alignItems = 'center';
   bar.setAttribute('role', 'banner');
 
-  // inner wrapper that will be aligned with the sidebar start
+  // inner wrapper that holds content; allow it to stretch horizontally
   const inner = document.createElement('div');
   inner.className = 'topbar-inner';
   inner.style.display = 'flex';
   inner.style.alignItems = 'center';
   inner.style.justifyContent = 'space-between';
-  inner.style.gap = '12px';
-  inner.style.padding = '10px 18px';
-  inner.style.boxSizing = 'border-box';
-  // allow the inner to expand beyond previous max constraints
-  inner.style.maxWidth = 'none';
   inner.style.width = '100%';
+  inner.style.padding = '6px 12px'; // small vertical padding keeps reduced height
+  inner.style.gap = '8px';
+  inner.style.boxSizing = 'border-box';
+  inner.style.maxWidth = 'none';
 
-  // left group (toggle + brand)
+  // Left group contains the collapse/toggle button aligned to the far left edge
   const left = document.createElement('div');
   left.style.display = 'flex';
-  left.style.gap = '10px';
   left.style.alignItems = 'center';
+  left.style.gap = '8px';
 
+  // Collapse/toggle button - moved to the very left and made compact
   const toggleBtn = document.createElement('button');
-  toggleBtn.className = 'btn';
-  toggleBtn.textContent = '☰';
+  toggleBtn.className = 'btn topbar-toggle';
+  toggleBtn.type = 'button';
   toggleBtn.setAttribute('aria-label', 'Abrir menu');
+  toggleBtn.style.height = '32px';
+  toggleBtn.style.width = '36px';
+  toggleBtn.style.display = 'inline-flex';
+  toggleBtn.style.alignItems = 'center';
+  toggleBtn.style.justifyContent = 'center';
+  toggleBtn.style.padding = '0';
+  toggleBtn.style.fontSize = '16px';
+  toggleBtn.textContent = '☰';
+
   toggleBtn.addEventListener('click', () => {
     const sidebar = window.__pandda_sidebar || document.querySelector('aside.sidebar');
     if (!sidebar) return;
-
-    // mobile: overlay-mode -> open overlay
+    // Mobile overlay behavior
     if (sidebar.classList.contains('overlay-mode')) {
       if (typeof sidebar.toggleOverlay === 'function') {
         sidebar.toggleOverlay();
       } else {
-        // fallback: toggle display
         sidebar.style.display = sidebar.style.display === 'none' ? 'flex' : 'none';
       }
       return;
     }
-
-    // desktop: toggle collapsed state (simulate collapse button click)
+    // Desktop: collapse sidebar (simulate click in collapse button)
     const collapseBtn = sidebar.querySelector('.sidebar-collapse');
     if (collapseBtn) collapseBtn.click();
-    // sync CSS variables after collapse toggle (delay to allow DOM changes)
+    // Sync CSS variables shortly after
     setTimeout(syncTopbarWithSidebar, 80);
   });
+
   left.appendChild(toggleBtn);
 
+  // Brand is optional in inner; keep small and not tall to preserve reduced height
   const brand = document.createElement('div');
-  brand.className = 'h1';
+  brand.className = 'topbar-brand';
   brand.textContent = 'Pandda';
-  // brand sits inside inner so it aligns with sidebar start
+  brand.style.fontSize = '14px';
+  brand.style.fontWeight = '700';
+  brand.style.lineHeight = '1';
+  brand.style.whiteSpace = 'nowrap';
+  brand.style.marginLeft = '6px';
   left.appendChild(brand);
 
-  // right group (theme + logout)
+  // Right group contains actions (theme, logout) compacted
   const right = document.createElement('div');
   right.style.display = 'flex';
-  right.style.gap = '8px';
   right.style.alignItems = 'center';
+  right.style.gap = '8px';
 
   const themeBtn = document.createElement('button');
   themeBtn.className = 'btn';
+  themeBtn.type = 'button';
   themeBtn.setAttribute('aria-label', 'Alternar tema');
+  themeBtn.style.height = '32px';
+  themeBtn.style.padding = '0 8px';
   themeBtn.textContent = readTheme() === 'light' ? '🌞' : '🌙';
   themeBtn.addEventListener('click', () => {
     const next = toggleTheme();
@@ -151,7 +170,10 @@ export function createTopbar() {
 
   const logoutBtn = document.createElement('button');
   logoutBtn.className = 'btn';
+  logoutBtn.type = 'button';
   logoutBtn.textContent = 'Sair';
+  logoutBtn.style.height = '32px';
+  logoutBtn.style.padding = '0 10px';
   logoutBtn.addEventListener('click', async () => {
     try {
       const auth = await import('../core/auth.js');
@@ -168,16 +190,14 @@ export function createTopbar() {
   });
   right.appendChild(logoutBtn);
 
-  // assemble inner
+  // Assemble
   inner.appendChild(left);
   inner.appendChild(right);
   bar.appendChild(inner);
 
-  // initial sync and listeners to keep alignment correct
+  // initial sync and listeners
   syncTopbarWithSidebar();
-  // keep in sync on resize and on sidebar changes
   window.addEventListener('resize', syncTopbarWithSidebar);
-  // if sidebar is mounted later, try sync after short delay
   setTimeout(syncTopbarWithSidebar, 120);
 
   return bar;
