@@ -1,4 +1,5 @@
-// js/ui/topbar.js - topbar com logout que redireciona para login.html (página isolada)
+// js/ui/topbar.js - topbar simplificado: remove botões de entidades (Clientes, Planos, Apps, Servidores)
+// Mantém: menu toggle, marca, tema, usuário e logout (redireciona para login.html)
 import { currentUser } from '../core/auth.js';
 import { toast } from '../ui/toast.js';
 
@@ -69,24 +70,6 @@ export function createTopbar() {
   brand.textContent = 'Pandda';
   left.appendChild(brand);
 
-  const nav = document.createElement('div');
-  nav.style.display = 'flex';
-  nav.style.gap = '6px';
-  const links = [
-    { label: 'Clientes', path: '#/clients' },
-    { label: 'Planos', path: '#/plans' },
-    { label: 'Apps', path: '#/apps' },
-    { label: 'Servidores', path: '#/servers' }
-  ];
-  links.forEach(l => {
-    const b = document.createElement('button');
-    b.className = 'btn';
-    b.textContent = l.label;
-    b.addEventListener('click', () => { location.hash = l.path; });
-    nav.appendChild(b);
-  });
-  left.appendChild(nav);
-
   bar.appendChild(left);
 
   const right = document.createElement('div');
@@ -94,7 +77,6 @@ export function createTopbar() {
   right.style.gap = '8px';
   right.style.alignItems = 'center';
 
-  // Theme toggle UI
   const themeBtn = document.createElement('button');
   themeBtn.className = 'btn';
   themeBtn.setAttribute('aria-label', 'Alternar tema');
@@ -122,9 +104,7 @@ export function createTopbar() {
       if (auth && typeof auth.logout === 'function') {
         await auth.logout();
       }
-      // desmonta chrome se existir
       if (window.__pandda_unmountChrome) window.__pandda_unmountChrome();
-      // redireciona para a página de login isolada
       location.href = './login.html';
       toast('info', 'Sessão finalizada');
     } catch (err) {
