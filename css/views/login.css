@@ -315,4 +315,87 @@
   }
 }
 
+/* Evitar scroll vertical na página de login; garantir que tudo caiba na viewport */
+html, body {
+  height: 100%;
+  overflow: hidden; /* impede scroll global */
+}
+
+/* Mas permitir scroll interno do card caso necessário (segurança) */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12px; /* reduzir padding para evitar overflow */
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Permitir que o conteúdo do card role apenas se necessário */
+.login-card {
+  max-height: calc(100vh - 32px); /* deixar margem mínima */
+  overflow: auto; /* apenas o card pode rolar internamente */
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Botão circular de refresh (mobile) - inicialmente invisível */
+.login-refresh {
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-8px);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+  box-shadow: 0 6px 18px rgba(2,6,23,0.45);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.06);
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 260ms ease, transform 320ms cubic-bezier(.2,.9,.2,1);
+  z-index: 1200;
+}
+
+/* Quando visível: desliza de cima para baixo (fade-in top→down) */
+.login-refresh.show {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* Ícone dentro do botão: tamanho fixo */
+.login-refresh svg {
+  width: 18px;
+  height: 18px;
+  display: block;
+}
+
+/* Animação de rotação contínua (quando ativo) */
+@keyframes _login_refresh_rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Estado "carregando": aplica rotação ao svg e reduz opacidade do card levemente */
+.login-refresh.loading svg {
+  animation: _login_refresh_rotate 900ms linear infinite;
+}
+
+/* Em loading, opcionalmente suaviza o fundo do card */
+.login-refresh.loading ~ .login-wrapper .login-card {
+  opacity: 0.92;
+  transition: opacity 220ms ease;
+}
+
+/* Apenas exibir o botão em tela pequena (mobile) */
+@media (min-width: 521px) {
+  .login-refresh { display: none; }
+}
+
 /* End of file */
