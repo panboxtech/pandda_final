@@ -1,0 +1,194 @@
+/* css/ui/sidebar.css
+   Sidebar overlay + collapsed (icons-only) behavior.
+   Incluir este arquivo no index.html (já recomendado).
+*/
+
+/* Base do aside */
+.sidebar {
+  width: 220px;
+  min-width: 220px;
+  max-width: 240px;
+  height: calc(100vh - 28px);
+  margin: 14px;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-sizing: border-box;
+  transition: width 220ms ease, transform 260ms ease, opacity 220ms ease;
+  position: relative;
+  background: var(--surface);
+}
+
+/* Inner content */
+.sidebar .sidebar-inner {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+/* Brand */
+.sidebar-brand {
+  font-weight: 800;
+  font-size: 16px;
+  padding: 6px 8px;
+}
+
+/* List */
+.sidebar-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  overflow: auto;
+}
+
+/* Item */
+.sidebar-item { display: block; }
+
+.sidebar-btn {
+  width: 100%;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+  box-sizing: border-box;
+}
+.sidebar-btn:hover {
+  background: rgba(255,255,255,0.02);
+}
+
+/* Icon and label */
+.sidebar-icon {
+  width: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.sidebar-label {
+  flex: 1 1 auto;
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Controls */
+.sidebar-controls {
+  margin-top: auto;
+  display: flex;
+  justify-content: center;
+}
+.sidebar-collapse {
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+/* Overlay mode (mobile and optional on desktop) */
+.sidebar.overlay-mode {
+  position: fixed;
+  left: 12px;
+  top: 12px;
+  bottom: 12px;
+  z-index: 1400;
+  width: 84%;
+  max-width: 340px;
+  transform: translateY(-8px) translateX(-10px);
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: 0 12px 40px rgba(2,6,23,0.6);
+  transition: transform 260ms cubic-bezier(.2,.9,.2,1), opacity 220ms ease;
+  background: var(--surface);
+}
+
+/* When overlay open: slide in and visible */
+.sidebar.overlay-mode.sidebar-overlay-open {
+  transform: translateY(0) translateX(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* overlay close button (top-right) */
+.sidebar-overlay-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  padding: 6px;
+  display: none;
+  cursor: pointer;
+}
+.sidebar.overlay-mode .sidebar-overlay-close {
+  display: inline-flex;
+}
+
+/* when overlay active, dim background */
+body.sidebar-overlay-active::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 1300;
+}
+
+/* Collapsed state - icons only */
+.sidebar.collapsed {
+  width: 64px !important;
+  min-width: 64px !important;
+  max-width: 64px !important;
+}
+
+/* In collapsed state, hide labels */
+.sidebar.collapsed .sidebar-label {
+  display: none;
+}
+
+/* Keep icons centered in collapsed */
+.sidebar.collapsed .sidebar-btn {
+  justify-content: center;
+  padding: 10px 6px;
+}
+
+/* Accessibility: focus styles */
+.sidebar-btn:focus {
+  outline: 2px solid rgba(63,176,255,0.14);
+  outline-offset: 2px;
+}
+
+/* Small screens: make sidebar overlay and adjust sizes */
+@media (max-width: 520px) {
+  .sidebar {
+    margin: 12px;
+    padding: 10px;
+    width: 84%;
+    max-width: 320px;
+    min-width: auto;
+    position: fixed;
+    left: 8px;
+    top: 8px;
+    bottom: 8px;
+    transform: translateY(-8px) translateX(-10px);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 1400;
+  }
+  .sidebar .sidebar-brand { display: block; }
+  .sidebar-overlay-close { display: inline-flex; }
+}
+
+/* subtle divider between sidebar and content when expanded */
+.app-layout > .sidebar + #outlet {
+  border-left: 1px solid rgba(255,255,255,0.02);
+}

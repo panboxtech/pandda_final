@@ -1,5 +1,6 @@
-// js/ui/topbar.js - topbar simplificado: remove botões de entidades (Clientes, Planos, Apps, Servidores)
-// Mantém: menu toggle, marca, tema, usuário e logout (redireciona para login.html)
+// js/ui/topbar.js - topbar simplificado: menu toggle, marca, tema, logout.
+// O toggle do menu agora tenta usar a API do sidebar (toggleOverlay) se disponível,
+// caso contrário usa fallback de style.display toggle.
 import { currentUser } from '../core/auth.js';
 import { toast } from '../ui/toast.js';
 
@@ -47,6 +48,7 @@ export function createTopbar() {
   bar.style.alignItems = 'center';
   bar.style.display = 'flex';
   bar.style.padding = '10px 16px';
+  bar.setAttribute('role', 'banner');
 
   const left = document.createElement('div');
   left.style.display = 'flex';
@@ -56,10 +58,19 @@ export function createTopbar() {
   const toggleBtn = document.createElement('button');
   toggleBtn.className = 'btn';
   toggleBtn.textContent = '☰';
-  toggleBtn.setAttribute('aria-label', 'Toggle sidebar');
+  toggleBtn.setAttribute('aria-label', 'Abrir menu');
   toggleBtn.addEventListener('click', () => {
-    const sidebar = document.querySelector('aside.card');
+    // Preferir API do sidebar exposta globalmente
+    const sidebar = window.__pandda_sidebar || document.querySelector('aside.card');
     if (!sidebar) return;
+
+    // Se existir função toggleOverlay use-a (overlay-friendly)
+    if (typeof sidebar.toggleOverlay === 'function') {
+      sidebar.toggleOverlay();
+      return;
+    }
+
+    // fallback: alterna visibilidade
     const hidden = sidebar.style.display === 'none';
     sidebar.style.display = hidden ? 'flex' : 'none';
   });
@@ -89,11 +100,11 @@ export function createTopbar() {
   right.appendChild(themeBtn);
 
   const user = currentUser();
-  const userBadge = document.createElement('div');
-  userBadge.className = 'card';
-  userBadge.style.padding = '6px 10px';
-  userBadge.textContent = user ? `${user.email} (${user.role})` : 'Anônimo';
-  right.appendChild(userBadge);
+  // removemos exibição de usuário na topbar (solicitado exibir somente na sidebar - que foi também removida)
+  // manter espaço para possíveis ações futuras (notificações, etc.)
+  const spacer = document.createElement('div');
+  spacer.style.minWidth = '8px';
+  right.appendChild(spacer);
 
   const logoutBtn = document.createElement('button');
   logoutBtn.className = 'btn';

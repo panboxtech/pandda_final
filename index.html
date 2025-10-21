@@ -13,13 +13,17 @@
   <!-- theme (variables) -->
   <link rel="stylesheet" href="./css/theme.css" />
 
-  <!-- other view styles (optional) -->
+  <!-- sidebar specific styles (new) -->
+  <link rel="stylesheet" href="./css/ui/sidebar.css" />
+
+  <!-- view-specific styles (NOT including login here; login remains isolated in login.html) -->
   <link rel="stylesheet" href="./css/views/clients.css" />
   <link rel="stylesheet" href="./css/views/plans.css" />
   <link rel="stylesheet" href="./css/views/apps.css" />
   <link rel="stylesheet" href="./css/views/servers.css" />
 </head>
 <body>
+  <!-- topbar is mounted dynamically by main.js -->
   <div id="app" class="app"></div>
 
   <script type="module" src="./js/main.js"></script>
