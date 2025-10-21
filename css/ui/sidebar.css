@@ -141,3 +141,38 @@ body.sidebar-overlay-active .sidebar-backdrop { opacity: 1; }
 
 /* divider between sidebar and content when expanded */
 .app-layout > .sidebar + #outlet { border-left: 1px solid rgba(255,255,255,0.02); }
+
+/* Alinha o conteúdo da topbar com o início da sidebar */
+.topbar {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1500;
+}
+
+/* Wrapper interno que alinha o conteúdo ao mesmo X da sidebar */
+.topbar .topbar-inner {
+  margin-left: calc(var(--sidebar-left-offset, 14px) + var(--sidebar-width, 220px));
+  padding-right: 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  /* permitir expansão maior que o limite anterior */
+  max-width: none;
+  width: auto;
+  box-sizing: border-box;
+}
+
+/* Quando a sidebar estiver colapsada (classe .collapsed aplicada ao aside), ajustar margem */
+.sidebar.collapsed + .app-layout .topbar .topbar-inner,
+.app-layout .sidebar.collapsed ~ .topbar .topbar-inner {
+  margin-left: calc(var(--sidebar-left-offset, 14px) + var(--sidebar-collapsed-width, 64px));
+}
+
+/* Fallbacks para quando não houver custom properties */
+:root {
+  --sidebar-left-offset: 14px;
+  --sidebar-width: 220px;
+  --sidebar-collapsed-width: 64px;
+}
