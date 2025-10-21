@@ -1,13 +1,7 @@
-// js/ui/topbar.js - topbar com botão de alternância de tema e logout que desmonta o chrome
+// js/ui/topbar.js - topbar com logout que redireciona para login.html (página isolada)
 import { currentUser } from '../core/auth.js';
 import { toast } from '../ui/toast.js';
 
-/**
- * Theme handling:
- * - Persiste escolha em localStorage key "pandda_theme"
- * - Applies attribute data-theme="light" on document.documentElement for light theme
- * - Default is dark (no attribute or different value)
- */
 const THEME_KEY = 'pandda_theme';
 
 function readTheme() {
@@ -43,14 +37,7 @@ function toggleTheme() {
   return next;
 }
 
-/**
- * createTopbar()
- * - Cria a topbar sem assumir referências externas diretas.
- * - Logout listener uses window.__pandda_unmountChrome and window.__pandda_mountLoginRouteOnly
- *   defined in main.js to teardown chrome and show login route.
- */
 export function createTopbar() {
-  // ensure theme applied on creation
   applyTheme(readTheme());
 
   const bar = document.createElement('div');
@@ -111,7 +98,6 @@ export function createTopbar() {
   const themeBtn = document.createElement('button');
   themeBtn.className = 'btn';
   themeBtn.setAttribute('aria-label', 'Alternar tema');
-  // reflect current theme in button text
   themeBtn.textContent = readTheme() === 'light' ? '🌞' : '🌙';
   themeBtn.addEventListener('click', () => {
     const next = toggleTheme();
@@ -132,16 +118,14 @@ export function createTopbar() {
   logoutBtn.textContent = 'Sair';
   logoutBtn.addEventListener('click', async () => {
     try {
-      // importar logout dinamicamente evita ciclo de dependência
       const auth = await import('../core/auth.js');
       if (auth && typeof auth.logout === 'function') {
         await auth.logout();
       }
-      // desmonta chrome (topbar + sidebar + outlet) e restaura apenas rota de login
+      // desmonta chrome se existir
       if (window.__pandda_unmountChrome) window.__pandda_unmountChrome();
-      if (window.__pandda_mountLoginRouteOnly) window.__pandda_mountLoginRouteOnly();
-      // navega para login sem reload
-      location.hash = '#/login';
+      // redireciona para a página de login isolada
+      location.href = './login.html';
       toast('info', 'Sessão finalizada');
     } catch (err) {
       console.error('topbar.logout', err);
